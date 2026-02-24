@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fanny's Cleaning Service</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --purple-main: #6a1b9a;
+            --purple-dark: #4a148c;
+            --purple-accent: #ab47bc;
+            --purple-soft: #f3e5f5;
+            --white: #ffffff;
+            --text-dark: #1a0631;
+            --gradient: linear-gradient(135deg, #6a1b9a 0%, #ab47bc 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--white);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3 { font-family: 'Montserrat', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- NAVIGATION MODERN --- */
+        nav {
+            background: rgba(74, 20, 140, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 15px; text-decoration: none; }
+        .logo-img { height: 50px; width: 50px; border-radius: 50%; border: 2px solid var(--purple-accent); background: white; padding: 2px; }
+        .logo-text { color: white; font-size: 1.2rem; font-weight: 800; }
+        .logo-text span { color: var(--purple-soft); font-weight: 400; }
+
+        .nav-menu { display: flex; list-style: none; gap: 30px; }
+        .nav-menu li a { color: white; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: 0.3s; text-transform: uppercase; }
+        .nav-menu li a:hover { color: var(--purple-accent); }
+
+        .btn-admin {
+            background: var(--gradient);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.75rem !important;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .menu-toggle { display: none; color: white; font-size: 1.5rem; cursor: pointer; background: none; border: none; }
+
+        /* --- HERO SLIDER --- */
+        .slider-container { position: relative; width: 100%; height: 90vh; overflow: hidden; }
+        .slide { 
+            position: absolute; width: 100%; height: 100%; opacity: 0; 
+            transition: opacity 1.5s ease-in-out; 
+            display: flex; align-items: center; justify-content: center;
+            background-size: cover; background-position: center;
+        }
+        .slide.active { opacity: 1; }
+        .slide::after { 
+            content: ''; position: absolute; width: 100%; height: 100%; 
+            background: rgba(26, 6, 49, 0.5);
+        }
+        
+        .hero-content { position: relative; z-index: 5; text-align: center; color: white; max-width: 900px; padding: 20px; }
+        .hero-content h1 { font-size: clamp(2rem, 6vw, 4.5rem); line-height: 1; margin-bottom: 25px; }
+        .hero-content p { font-size: 1.2rem; margin-bottom: 30px; color: var(--purple-soft); }
+        
+        .btn-main { 
+            background: var(--gradient); color: white; padding: 18px 40px; 
+            text-decoration: none; border-radius: 50px; font-weight: 800; 
+            display: inline-block; transition: 0.4s; border: none;
+            box-shadow: 0 10px 20px rgba(106, 27, 154, 0.4);
+        }
+        .btn-main:hover { transform: scale(1.05); box-shadow: 0 15px 25px rgba(106, 27, 154, 0.6); }
+
+        /* --- SERVICES --- */
+        .services-section { padding: 100px 8%; background: var(--white); position: relative; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 2.5rem; color: var(--purple-dark); margin-bottom: 10px; }
+        .underline { width: 80px; height: 4px; background: var(--gradient); margin: auto; border-radius: 2px; }
+
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .service-card { 
+            background: var(--white); padding: 40px; border-radius: 25px; 
+            text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            transition: 0.4s; border: 1px solid var(--purple-soft);
+        }
+        .service-card:hover { transform: translateY(-15px); border-color: var(--purple-accent); }
+        .icon-box { 
+            width: 80px; height: 80px; background: var(--purple-soft); 
+            border-radius: 20px; display: flex; align-items: center; 
+            justify-content: center; margin: 0 auto 25px; transform: rotate(-5deg);
+            transition: 0.4s;
+        }
+        .service-card:hover .icon-box { transform: rotate(0deg); background: var(--purple-main); }
+        .service-card:hover .icon-box i { color: white; }
+        .icon-box i { font-size: 2rem; color: var(--purple-main); }
+
+        /* --- WAVE DIVIDER --- */
+        .wave-container { position: relative; background: var(--purple-soft); padding: 100px 8%; }
+        .wave-top { position: absolute; top: 0; left: 0; width: 100%; overflow: hidden; line-height: 0; }
+        .wave-top svg { display: block; width: calc(100% + 1.3px); height: 50px; fill: var(--white); }
+
+        /* --- FORM (IGUAL A ROBERT) --- */
+        .form-card { 
+            background: var(--white); padding: 50px; border-radius: 30px; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1); max-width: 900px; margin: -50px auto 0;
+            position: relative; z-index: 10;
+        }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .input-group input, .input-group select, .input-group textarea { 
+            width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #eee;
+            background: #fafafa; transition: 0.3s; outline: none; font-family: inherit;
+        }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus { border-color: var(--purple-accent); background: white; }
+        .btn-submit { 
+            width: 100%; margin-top: 30px; background: var(--gradient); 
+            color: white; padding: 18px; border: none; border-radius: 12px; 
+            font-weight: 700; cursor: pointer; transition: 0.3s; text-transform: uppercase;
+        }
+        .btn-submit:hover { transform: scale(1.01); box-shadow: 0 10px 20px rgba(106, 27, 154, 0.3); }
+
+        /* --- ABOUT --- */
+        .about-section { padding: 120px 8%; display: flex; align-items: center; gap: 60px; flex-wrap: wrap; }
+        .about-img-box { flex: 1; position: relative; }
+        .about-img-box img { width: 100%; max-width: 450px; border-radius: 30px; filter: drop-shadow(0 20px 30px rgba(106, 27, 154, 0.2)); }
+        .about-text { flex: 1.2; }
+        .about-text h2 { color: var(--purple-dark); margin-bottom: 20px; font-size: 2.2rem; }
+
+        /* --- FOOTER --- */
+        footer { background: var(--purple-dark); color: white; padding: 80px 8% 40px; text-align: center; }
+        .footer-logo { font-size: 2rem; margin-bottom: 20px; display: block; }
+        .social-links { margin: 30px 0; display: flex; justify-content: center; gap: 20px; }
+        .social-links a { color: white; font-size: 1.5rem; transition: 0.3s; }
+        .social-links a:hover { color: var(--purple-accent); }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .nav-menu {
+                position: absolute; top: 100%; left: -100%; flex-direction: column;
+                background: var(--purple-dark); width: 100%; padding: 40px; transition: 0.5s;
+            }
+            .nav-menu.active { left: 0; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-card { padding: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#home" class="logo-container">
+            <img src="logo_fanny2.png" alt="Fanny's Cleaning Service" class="logo-img"> 
+            <div class="logo-text">FANNY'S <span>CLEANING SERVICE</span></div>
+        </a>
+        <button class="menu-toggle" id="menu-btn"><i class="fas fa-bars"></i></button>
+        <ul class="nav-menu" id="nav-list">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#estimate">Get Estimate</a></li> 
+            <li><a href="#about">About</a></li>
+            <li><a href="admin.html" class="btn-admin"><i class="fas fa-lock"></i> STAFF LOGIN</a></li>
+        </ul>
+    </nav>
+
+    <header class="slider-container" id="home">
+        <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80');">
+            <div class="hero-content">
+                <h1>Experience Pure Perfection</h1>
+                <p>High-end cleaning services for those who value detail and excellence.</p>
+                <a href="#estimate" class="btn-main">BOOK AN APPOINTMENT</a>
+            </div>
+        </div>
+        <div class="slide" style="background-image: url('Construction cleanings2.jpg');">
+        <div class="hero-content">
+            <h1>Flawless Post-Construction Care</h1>
+            <p>Expert dust and debris removal to make your new project move-in ready.</p>
+            <a href="#estimate" class="btn-main">GET A QUOTE</a>
+        </div>
+        </div>
+        <div class="slide" style="background-image: url('Damp-profings.jpg');">
+            <div class="hero-content">
+                <h1>Sparkle & Shine Every Day</h1>
+                <p>Residential and commercial cleaning with a touch of luxury.</p>
+                <a href="tel:+18432270333" class="btn-main">CALL (843) 227-0333</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="services-section" id="services">
+        <div class="section-header">
+            <h2>Our Premium Services</h2>
+            <div class="underline"></div>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="icon-box"><i class="fas fa-broom-ball"></i></div>
+                <h3>Deep Cleaning</h3>
+                <p>A comprehensive sanitization that covers every hidden corner of your property.</p>
+            </div>
+            <div class="service-card">
+                <div class="icon-box"><i class="fas fa-tools"></i></div>
+                <h3>Construction Cleaning</h3>
+                <p>Expert dust and debris removal to make your new space move-in ready.</p>
+            </div>
+            <div class="service-card">
+                <div class="icon-box"><i class="fas fa-shield-halved"></i></div>
+                <h3>Damp-proofing</h3>
+                <p>Advanced structural protection to prevent water intrusion and mold growth.</p>
+            </div>			
+            <div class="service-card">
+                <div class="icon-box"><i class="fas fa-box-archive"></i></div>
+                <h3>Packing Services</h3>
+                <p>Professional packing and organization services for a stress-free transition.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="wave-container">
+        <div class="wave-top">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V120c68-12,115.8-51.6,224-63.55Z"></path>
+            </svg>
+        </div>
+        
+        <div class="form-card" id="estimate">
+            <h2 style="text-align:center; color: var(--purple-main); margin-bottom: 10px;">Request a Free Quote</h2>
+            <p style="text-align:center; margin-bottom: 30px; color: #666;">Describe your project and we will contact you immediately.</p>
+            
+            <form action="https://formspree.io/f/mkovndob" method="POST">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <input type="text" name="name" placeholder="Full Name" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" name="email" placeholder="Email Address" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="tel" name="phone" placeholder="Phone Number" required>
+                    </div>
+                    <div class="input-group">
+                        <select name="service" required>
+                            <option value="">Service of Interest</option>
+                            <option value="Deep Cleaning">Deep Cleaning</option>
+                            <option value="Construction">Construction Cleanup</option>
+                            <option value="Packing">Packing & Organization</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group" style="margin-top:25px;">
+                    <textarea name="message" rows="4" placeholder="Tell us about your project details..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Send Message Now</button>
+            </form>
+        </div>
+    </div>
+
+    <section class="about-section" id="about">
+        <div class="about-img-box">
+            <img src="logo_fanny.png" alt="Fanny Bautista">
+        </div>
+        <div class="about-text">
+            <h2>Fanny Bautista</h2>
+            <p>Founder & Owner</p>
+            <p style="margin-top: 20px; font-size: 1.1rem; color: #444;">With years of experience in the cleaning industry, Fanny's Cleaning Service was born from a passion for creating healthy, sparkling environments. We don't just clean; we restore the peace and clarity of your spaces.</p>
+            <div style="margin-top: 30px;">
+                <i class="fas fa-check-circle" style="color: var(--purple-main);"></i> 100% Satisfaction Guaranteed<br>
+                <i class="fas fa-check-circle" style="color: var(--purple-main);"></i> Eco-Friendly Products<br>
+                <i class="fas fa-check-circle" style="color: var(--purple-main);"></i> Detail-Oriented Team
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <span class="footer-logo">FANNY'S CLEANING SERVICE</span>
+        <p>Providing professional shine since 2026.</p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="tel:+18432270333"><i class="fas fa-phone"></i></a>
+        </div>
+        <p style="opacity: 0.5; font-size: 0.8rem;">&copy; 2026 Fanny's Cleaning Service. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // SLIDER
+        let current = 0;
+        const slides = document.querySelectorAll('.slide');
+        setInterval(() => {
+            slides[current].classList.remove('active');
+            current = (current + 1) % slides.length;
+            slides[current].classList.add('active');
+        }, 5000);
+
+        // MOBILE MENU
+        const btn = document.getElementById('menu-btn');
+        const list = document.getElementById('nav-list');
+        btn.onclick = () => list.classList.toggle('active');
+        
+        document.querySelectorAll('.nav-menu a').forEach(l => {
+            l.onclick = () => list.classList.remove('active');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quote Generator | Fanny's Cleaning Service</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+
+    <style>
+        :root {
+            --purple-main: #6a1b9a;
+            --purple-dark: #4a148c;
+            --purple-accent: #ab47bc;
+            --purple-soft: #f3e5f5;
+            --danger: #d63031;
+            --gradient: linear-gradient(135deg, #6a1b9a 0%, #ab47bc 100%);
+        }
+
+        body { font-family: 'Open Sans', sans-serif; background: var(--purple-soft); margin: 0; padding: 10px; color: #1a0631; overflow-x: hidden; }
+        
+        /* LOGIN GLASSMORPHISM */
+        .login-box { 
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 40px; border-radius: 30px; max-width: 400px; 
+            margin: 80px auto; text-align: center; 
+            box-shadow: 0 20px 50px rgba(74, 20, 140, 0.15); 
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .password-container { position: relative; width: 100%; display: flex; align-items: center; }
+        .password-container input { padding-right: 45px; } 
+        .toggle-btn { position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: var(--purple-main); font-size: 18px; padding: 5px; }
+
+        .security-notice { font-size: 11px; color: var(--purple-dark); margin-top: 15px; font-weight: bold; text-transform: uppercase; opacity: 0.7; }
+
+        /* PANEL CONTENT */
+        .admin-content { 
+            display: none; max-width: 900px; margin: 20px auto; 
+            background: white; padding: 40px; border-radius: 30px; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.05); position: relative; 
+        }
+        
+        input, textarea { 
+            width: 100%; padding: 14px; margin: 8px 0; border: 2px solid #eee; 
+            border-radius: 12px; font-size: 16px; font-family: inherit; 
+            color: #000; box-sizing: border-box; transition: 0.3s;
+        }
+        input:focus, textarea:focus { border-color: var(--purple-accent); outline: none; background: #fff; }
+
+        /* TABLA DE ÍTEMS AJUSTADA */
+        .table-items { 
+            width: 100%; 
+            border-collapse: separate; 
+            border-spacing: 0; 
+            margin-top: 20px; 
+            table-layout: fixed;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .table-items th { 
+            color: #888; 
+            padding: 15px 12px; 
+            text-align: left; 
+            text-transform: uppercase; 
+            font-size: 11px; 
+            letter-spacing: 1px;
+            background: #fafafa;
+            border-bottom: 3px solid var(--purple-dark);
+        }
+        .table-items td { 
+            background: #fff; 
+            padding: 12px; 
+            border-bottom: 1px solid #f0f0f0; 
+            vertical-align: middle; 
+        }
+        .table-items tr:last-child td { border-bottom: none; }
+        .table-items td:first-child { width: 50%; }
+        .table-items td:last-child { width: 45px; text-align: center; }
+
+        @media screen and (max-width: 600px) {
+            .table-items { border: none; border-radius: 0; overflow: visible; }
+            .table-items, .table-items thead, .table-items tbody, .table-items th, .table-items td, .table-items tr { display: block; width: 100%; }
+            .table-items thead { display: none; }
+            .table-items tr { margin-bottom: 20px; border: 1px solid #eee; border-radius: 20px; padding: 15px; background: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+            .table-items td { border: none !important; padding: 8px 0 !important; width: 100% !important; background: transparent !important; }
+            .table-items td::before { content: attr(data-label); display: block; font-size: 10px; color: var(--purple-main); font-weight: 800; text-transform: uppercase; margin-bottom: 4px; }
+            .table-items td:last-child { text-align: right !important; border-top: 1px solid #f0f0f0 !important; margin-top: 10px; padding-top: 15px !important; }
+            .pdf-header { flex-direction: column; text-align: center; gap: 20px; }
+            .grid-header { grid-template-columns: 1fr !important; gap: 15px !important; }
+        }
+
+        .btn-delete { background: none; border: none; color: #ccc; cursor: pointer; font-size: 20px; transition: 0.3s; }
+        .btn-delete:hover { color: var(--danger); transform: scale(1.1); }
+
+        .total-box { 
+            background: var(--purple-dark); color: white; padding: 25px 35px; 
+            display: flex; justify-content: space-between; font-weight: bold; 
+            font-size: 1.4rem; border-radius: 20px; margin-top: 30px;
+            box-shadow: 0 15px 30px rgba(74, 20, 140, 0.2);
+        }
+
+        .action-area { display: flex; align-items: center; gap: 15px; margin-top: 40px; }
+        .btn-generate { 
+            background: var(--gradient); color: white; border: none; 
+            padding: 18px 25px; cursor: pointer; border-radius: 15px; 
+            font-weight: bold; transition: 0.3s; font-size: 16px; flex-grow: 1; 
+            text-transform: uppercase; box-shadow: 0 10px 20px rgba(106, 27, 154, 0.2);
+        }
+        .btn-clear-mini { background: #eee; border: none; padding: 18px; border-radius: 15px; cursor: pointer; color: #666; transition: 0.3s; }
+        
+        /* BOTON LOGOUT DANGER */
+        .btn-logout { background: var(--danger); color: white; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-size: 12px; position: absolute; top: 20px; right: 20px; transition: 0.3s; font-weight: bold; }
+
+        .black-bar-container { 
+            background: var(--purple-soft); color: var(--purple-dark); padding: 12px 18px; 
+            margin-bottom: 8px; display: flex; align-items: center; border-radius: 12px; 
+            border: 1px solid rgba(74, 20, 140, 0.1);
+        }
+        .black-bar-label { font-weight: 800; margin-right: 10px; flex-shrink: 0; font-size: 13px; text-transform: uppercase; }
+        .black-bar-input { color: var(--purple-main) !important; border: none !important; background: transparent !important; font-weight: bold !important; padding: 0 !important; margin: 0 !important; width: 100% !important; font-size: 16px; }
+
+        /* --- CONFIGURACIÓN DE IMPRESIÓN MAESTRA --- */
+        @media print {
+            @page { size: letter; margin: 0; }
+            body { background: white !important; padding: 0; margin: 0; width: 210mm; }
+            .no-print, .btn-logout, .btn-delete, .add-row-btn, .security-notice, .action-area { display: none !important; }
+            .admin-content { display: block !important; box-shadow: none !important; padding: 15mm !important; width: 100%; border: none !important; margin: 0 !important; }
+            
+            .table-items { 
+                display: table !important; width: 100% !important; table-layout: auto !important; 
+                border-collapse: separate !important; border-spacing: 0 !important; 
+                border: 1px solid #ddd !important; border-radius: 15px !important; overflow: hidden !important;
+            }
+            .table-items thead { display: table-header-group !important; }
+            .table-items tr { display: table-row !important; background: transparent !important; }
+            .table-items td { display: table-cell !important; background: white !important; border-bottom: 1px solid #eee !important; padding: 10px 8px !important; }
+            .table-items th { display: table-cell !important; border-bottom: 3px solid var(--purple-dark) !important; padding: 12px 10px !important; background: #f9f9f9 !important; color: #000 !important; font-weight: bold !important; }
+            .table-items td::before { display: none !important; }
+            
+            .validity-message { display: block !important; -webkit-print-color-adjust: exact; }
+            
+            input, textarea { border: none !important; background: transparent !important; padding: 2px !important; font-size: 12pt !important; }
+            .black-bar-container { border: 1px solid #eee !important; background: #f9f9f9 !important; -webkit-print-color-adjust: exact; }
+            .total-box { background: var(--purple-dark) !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; margin-top: 50px !important; border-radius: 15px !important; }
+            .grid-header { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 30px !important; }
+            .logo-rc { max-width: 100px !important; -webkit-print-color-adjust: exact; }
+        }
+
+        .pdf-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .logo-rc { width: 110px; height: auto; border-radius: 50%; border: 3px solid var(--purple-soft); transition: 0.3s; }
+        
+        .validity-message {
+            display: none;
+            margin-top: 30px;
+            padding: 15px;
+            background: #f3e5f5;
+            border-left: 5px solid var(--purple-dark);
+            border-radius: 8px;
+            font-size: 11px;
+            color: #334155;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login" class="login-box">
+        <img src="logo_fanny2.png" style="width: 100px; margin-bottom: 20px; border-radius: 50%;">
+        <h2 style="color: var(--purple-dark); margin: 0;">Fanny's Cleaning Service</h2>
+        <p style="color: #888; font-size: 14px; margin-bottom: 25px;">Management Portal</p>
+        <div class="password-container">
+            <input type="password" id="pass" placeholder="Enter Password" onkeypress="handleKeyPress(event)">
+            <button type="button" class="toggle-btn" onclick="togglePassword()">
+                <i id="eye-icon" class="fas fa-eye"></i>
+            </button>
+        </div>
+        <button class="btn-generate" onclick="checkPass()" style="margin-top: 15px; width: 100%;">ACCESS SYSTEM</button>
+        <div class="security-notice"><i class="fas fa-lock"></i> Secured Access Only</div>
+    </div>
+
+    <div id="panel" class="admin-content">
+        <button class="btn-logout no-print" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+
+        <div class="pdf-header">
+            <div>
+                <h1 style="color: var(--purple-main); margin: 0; font-size: 1.8rem;">Fanny's Cleaning Service</h1>
+                <p style="font-size: 14px; line-height: 1.4; color: #000; margin-top: 5px;">
+                    12 Josephine Dr.<br>
+                    Beaufort, SC 29906 USA<br>
+                    +1 843-227-0333<br>
+                    hond1021@gmail.com
+                </p>
+            </div>
+            <img src="logo_fanny2.png" class="logo-rc" alt="Logo">
+        </div>
+
+        <div class="grid-header" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <div>
+                <p style="color: var(--purple-dark); font-weight: 800; font-size: 11px; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;">BILL TO / ADDRESS</p>
+                <textarea id="cliente" rows="3" placeholder="Client Name & Address"></textarea>
+            </div>
+            <div>
+                <div class="black-bar-container"><span class="black-bar-label">Estimate #:</span> <input type="text" id="est_num" class="black-bar-input"></div>
+                <div class="black-bar-container"><span class="black-bar-label">DATE:</span> <input type="text" id="fecha_dinamica" class="black-bar-input"></div>
+            </div>
+        </div>
+
+        <table class="table-items" id="itemsTable">
+            <thead>
+                <tr>
+                    <th width="50%">DESCRIPTION</th>
+                    <th width="70">QTY</th>
+                    <th width="100">RATE</th>
+                    <th width="100">AMOUNT</th>
+                    <th width="45" class="no-print"></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        
+        <button class="btn no-print add-row-btn" onclick="addRow()" style="margin-top:10px; background: none; border: 2px dashed var(--purple-accent); color: var(--purple-main); padding: 12px; width: 100%; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s;">
+            <i class="fas fa-plus-circle"></i> Add New Line Item
+        </button>
+
+        <div class="total-box">
+            <span>TOTAL AMOUNT</span>
+            <span>$<span id="grand-total">0.00</span></span>
+        </div>
+
+        <div class="validity-message">
+            <strong>Terms & Conditions:</strong><br>
+            This estimate is valid for <strong>30 days</strong> from the date issued. Please note that prices are subject to change after this period due to market fluctuations in material and labor costs.
+        </div>
+
+        <div style="margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+            <div style="border-top: 1px solid #ddd; padding-top: 10px; font-size: 11px; color: #888; font-weight: bold; text-transform: uppercase;">Accepted By (Client Signature)</div>
+            <div style="border-top: 1px solid #ddd; padding-top: 10px; font-size: 11px; color: #888; font-weight: bold; text-transform: uppercase;">Accepted Date</div>
+        </div>
+
+        <div class="no-print" style="margin-top: 50px; border-top: 2px solid var(--purple-soft); padding-top: 30px;">
+            <h3 style="color: var(--purple-dark); margin-bottom: 20px;"><i class="fas fa-history"></i> Recent Estimates</h3>
+            <div id="history-container" style="max-height: 300px; overflow-y: auto; background: #fafafa; border-radius: 15px; padding: 15px; border: 1px solid #eee;">
+                <p style="text-align: center; color: #888;">Loading history...</p>
+            </div>
+        </div>
+
+        <div class="action-area no-print">
+            <button class="btn-clear-mini" onclick="manualReset()" title="Clear form">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+            <button class="btn-generate" onclick="generatePDF()">
+                <i class="fas fa-file-invoice-dollar"></i> GENERATE PDF & LOG
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        let datePicker;
+        window.onload = function() { if(sessionStorage.getItem("auth_fanny") === "true") { showPanel(); } }
+        function handleKeyPress(e) { if (e.keyCode === 13) checkPass(); }
+        function togglePassword() {
+            const p = document.getElementById("pass"), i = document.getElementById("eye-icon");
+            p.type = (p.type === "password") ? "text" : "password";
+            i.classList.toggle("fa-eye-slash");
+        }
+        function checkPass() {
+            if(document.getElementById('pass').value === "Fanny2026#") {
+                sessionStorage.setItem("auth_fanny", "true");
+                showPanel();
+            } else alert("Incorrect password");
+        }
+        function showPanel() {
+            document.getElementById('login').style.display = 'none';
+            document.getElementById('panel').style.display = 'block';
+            resetForm();
+            loadHistory();
+        }
+        function manualReset() { if(confirm("Are you sure you want to clear the form?")) resetForm(); }
+        function resetForm() {
+            const now = new Date();
+            const folio = "FC-" + now.getFullYear().toString().substr(-2) + (now.getMonth() + 1).toString().padStart(2, '0') + now.getDate().toString().padStart(2, '0') + now.getHours().toString().padStart(2, '0');
+            document.getElementById('est_num').value = folio;
+            document.getElementById('cliente').value = "";
+            document.getElementById('grand-total').innerText = "0.00";
+            document.getElementById("itemsTable").getElementsByTagName('tbody')[0].innerHTML = "";
+            addRow();
+            datePicker = flatpickr("#fecha_dinamica", { defaultDate: "today", dateFormat: "F j, Y" });
+        }
+        
+        async function loadHistory() {
+            const container = document.getElementById('history-container');
+            try {
+                const response = await fetch('http://54.84.170.85/fc/Bitacora/get_history.php');
+                const data = await response.json();
+                if (data.length === 0) { container.innerHTML = '<p>No records found.</p>'; return; }
+                
+                let html = '<table style="width:100%; font-size: 13px; border-collapse: collapse;">';
+                html += '<tr style="border-bottom: 2px solid #eee; text-align: left; color: #888;">';
+                html += '<th style="padding: 10px;">ID</th><th>Client</th><th>Date</th><th style="text-align: right; padding-right: 10px;">Amount</th></tr>';
+                
+                data.forEach(row => {
+                    html += `<tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding:10px; font-weight:bold; color:var(--purple-main);">${row.estimate}</td>
+                        <td>${row.name}</td>
+                        <td>${row.date}</td>
+                        <td style="text-align:right; padding-right: 10px; font-weight:bold;">$${row.total}</td>
+                    </tr>`;
+                });
+                container.innerHTML = html + '</table>';
+            } catch (e) { container.innerHTML = '<p>Error loading history.</p>'; }
+        }
+
+        async function sendToHistoryServer() {
+            const items = [];
+            const rows = document.getElementById("itemsTable").getElementsByTagName('tbody')[0].rows;
+            for (let i = 0; i < rows.length; i++) {
+                items.push({
+                    desc: rows[i].cells[0].getElementsByTagName('input')[0].value || "N/A",
+                    qty: rows[i].cells[1].getElementsByTagName('input')[0].value || 0,
+                    rate: rows[i].cells[2].getElementsByTagName('input')[0].value || 0
+                });
+            }
+            const data = {
+                estimate: document.getElementById('est_num').value,
+                date: document.getElementById('fecha_dinamica').value,
+                client_name: document.getElementById('cliente').value.split('\n')[0] || "No Name",
+                total: document.getElementById('grand-total').innerText
+            };
+            try { await fetch('http://54.84.170.85/fc/Bitacora/save_history.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); } catch (e) { }
+        }
+
+        function generatePDF() {
+            sendToHistoryServer();
+            window.print();
+            setTimeout(() => { loadHistory(); if(confirm("Clear form?")) resetForm(); }, 1500);
+        }
+
+        function logout() { sessionStorage.removeItem("auth_fanny"); location.reload(); }
+        function addRow() {
+            const tbody = document.getElementById("itemsTable").getElementsByTagName('tbody')[0];
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td data-label="Description"><input type="text" placeholder="Service description..."></td>
+                <td data-label="Qty"><input type="number" value="1" oninput="calc()"></td>
+                <td data-label="Rate"><input type="number" placeholder="0.00" oninput="calc()"></td>
+                <td data-label="Amount"><input type="number" readonly value="0.00"></td>
+                <td class="no-print"><button class="btn-delete" onclick="this.closest('tr').remove(); calc();"><i class="fas fa-times-circle"></i></button></td>
+            `;
+        }
+
+        function calc() {
+            let total = 0;
+            const rows = document.getElementById("itemsTable").getElementsByTagName('tbody')[0].rows;
+            for (let i = 0; i < rows.length; i++) {
+                const q = parseFloat(rows[i].cells[1].getElementsByTagName('input')[0].value) || 0;
+                const r = parseFloat(rows[i].cells[2].getElementsByTagName('input')[0].value) || 0;
+                const sub = q * r;
+                rows[i].cells[3].getElementsByTagName('input')[0].value = sub.toFixed(2);
+                total += sub;
+            }
+            document.getElementById('grand-total').innerText = total.toFixed(2);
+        }
+    </script>
+</body>
+</html>
